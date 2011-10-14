@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<strings>
+  <!-- Title -->
+  <string id="30000">Classical TV</string>
+
+  <!-- Directory -->
+  <string id="30201">Bu Haftanın Önerilenleri</string>
+  <string id="30202">Klasik Müzik</string>
+  <string id="30203">Popüler Müzik</string>
+  <string id="30204">Jazz</string>
+  <string id="30205">Belgeseller ve Daha Fazlası</string>
+  <string id="30206">Bale, Dans ve Tiyatro</string>
+  <string id="30207">Opera, Şarkılar, Aryalar</string>
+</strings>

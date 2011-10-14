@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<strings>
+  <!-- Title -->
+  <string id="30000">Classical TV</string>
+
+  <!-- Directory -->
+  <string id="30201">Recommended This Week</string>
+  <string id="30202">Classical Music</string>
+  <string id="30203">Popular Music</string>
+  <string id="30204">Jazz</string>
+  <string id="30205">Documentaries and More</string>
+  <string id="30206">Ballet, Dance and Theater</string>
+  <string id="30207">Opera, Songs, Arias</string>
+</strings>

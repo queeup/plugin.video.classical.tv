@@ -25,7 +25,7 @@ CACHE_1MONTH = 2592000
 
 CACHE_TIME = CACHE_1DAY
 
-URL = 'http://ads.adrise.tv/brightcove/get-all-playlists.php'
+URL = 'http://api.adrise.tv/playlists.php?content-owner=brightcove&_=1327339320673'
 
 class Main:
   def __init__(self):

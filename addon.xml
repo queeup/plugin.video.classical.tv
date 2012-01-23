@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon
   id="plugin.video.classical.tv"
-  version="1.0.0"
+  version="1.0.1"
   name="Classical TV"
   provider-name="queeup">
   <requires>
@@ -20,6 +20,5 @@
     <license>WTFPL</license>
     <platform>all</platform>
     <nofanart>true</nofanart>
-    <broken>Site changes!</broken>
   </extension>
 </addon>

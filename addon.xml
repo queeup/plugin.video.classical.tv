@@ -20,5 +20,6 @@
     <license>WTFPL</license>
     <platform>all</platform>
     <nofanart>true</nofanart>
+    <broken>Site changes!</broken>
   </extension>
 </addon>

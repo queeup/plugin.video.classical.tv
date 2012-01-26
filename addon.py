@@ -5,7 +5,7 @@ Debug = False
 
 # Imports
 import os, sys, urllib, urllib2, simplejson, datetime, time
-import md5, os, shutil, tempfile, time, errno
+import hashlib, os, shutil, tempfile, time, errno
 import xbmc, xbmcgui, xbmcplugin, xbmcaddon
 
 __addon__ = xbmcaddon.Addon(id='plugin.video.classical.tv')
@@ -35,7 +35,7 @@ class Main:
       self.START()
 
   def START(self):
-    if Debug: self.LOG('\nSTART function')
+    if Debug: self.LOG('START()')
     Main = [{'title':__language__(30201), 'number':6},
             {'title':__language__(30202), 'number':5},
             {'title':__language__(30203), 'number':4},
@@ -54,7 +54,7 @@ class Main:
     xbmcplugin.endOfDirectory(int(sys.argv[ 1 ]), True)
 
   def LIST(self):
-    if Debug: self.LOG('\nLIST function')
+    if Debug: self.LOG('LIST()')
     #json = simplejson.loads(urllib2.urlopen(URL).read())
     json = simplejson.loads(fetcher.fetch(URL, CACHE_TIME))
     for entry in json['items'][int(self.Arguments('number'))]['videos']:
@@ -99,7 +99,7 @@ class Main:
     return urllib.unquote_plus(Arguments[arg])
 
   def LOG(self, description):
-    xbmc.log("[ADD-ON] '%s v%s': '%s'" % (__plugin__, __version__, description), xbmc.LOGNOTICE)
+    xbmc.log("[ADD-ON] '%s v%s': %s" % (__plugin__, __version__, description), xbmc.LOGNOTICE)
 
 class DiskCacheFetcher:
   def __init__(self, cache_dir=None):
@@ -122,8 +122,7 @@ class DiskCacheFetcher:
 
   def fetch(self, url, max_age=0):
     # Use MD5 hash of the URL as the filename
-    print url
-    filename = md5.new(url).hexdigest()
+    filename = hashlib.md5(url).hexdigest()
     filepath = os.path.join(self.cache_dir, filename)
     if os.path.exists(filepath):
       if int(time.time()) - os.path.getmtime(filepath) < max_age:

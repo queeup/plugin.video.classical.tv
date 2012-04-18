@@ -1,12 +1,24 @@
 # -*- coding: utf-8 -*-
 
-# Debug
-Debug = False
-
 # Imports
-import os, sys, urllib, urllib2, simplejson, datetime, time
-import hashlib, os, shutil, tempfile, time, errno
-import xbmc, xbmcgui, xbmcplugin, xbmcaddon
+import os
+import sys
+import urllib
+import urllib2
+import time
+import datetime
+import hashlib
+import shutil
+import tempfile
+import errno
+import simplejson
+import xbmc
+import xbmcgui
+import xbmcplugin
+import xbmcaddon
+
+# Debug
+DEBUG = False
 
 __addon__ = xbmcaddon.Addon(id='plugin.video.classical.tv')
 __info__ = __addon__.getAddonInfo
@@ -27,23 +39,24 @@ CACHE_TIME = CACHE_1DAY
 
 URL = 'http://api.adrise.tv/playlists.php?content-owner=brightcove&_=1327339320673'
 
+
 class Main:
   def __init__(self):
     if ("action=list" in sys.argv[2]):
-      self.LIST()
+      self.list_contents()
     else:
-      self.START()
+      self.main_menu()
 
-  def START(self):
-    if Debug: self.LOG('START()')
+  def main_menu(self):
+    if DEBUG:
+      self.log('main_menu()')
     Main = [{'title':__language__(30201), 'number':6},
             {'title':__language__(30202), 'number':5},
             {'title':__language__(30203), 'number':4},
             {'title':__language__(30204), 'number':3},
             {'title':__language__(30205), 'number':2},
             {'title':__language__(30206), 'number':1},
-            {'title':__language__(30207), 'number':0},
-            ]
+            {'title':__language__(30207), 'number':0}, ]
     for i in Main:
       listitem = xbmcgui.ListItem(i['title'], iconImage='DefaultFolder.png', thumbnailImage=__icon__)
       url = '%s?action=list&number=%i' % (sys.argv[0], i['number'])
@@ -51,19 +64,19 @@ class Main:
     # Sort methods and content type...
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_NONE)
     # End of directory...
-    xbmcplugin.endOfDirectory(int(sys.argv[ 1 ]), True)
+    xbmcplugin.endOfDirectory(int(sys.argv[1]), True)
 
-  def LIST(self):
-    if Debug: self.LOG('LIST()')
-    #json = simplejson.loads(urllib2.urlopen(URL).read())
-    json = simplejson.loads(fetcher.fetch(URL, CACHE_TIME))
-    for entry in json['items'][int(self.Arguments('number'))]['videos']:
+  def list_contents(self):
+    if DEBUG:
+      self.log('list_contents()')
+    json = simplejson.loads(fetcher.fetch(URL))
+    for entry in json['items'][int(self.arguments('number'))]['videos']:
       thumb = entry['videoStillURL']
       video = entry['FLVURL']
       shortdesc = entry['shortDescription']
       longdesc = entry['longDescription']
       name = entry['name']
-      id = entry['id']
+      #id = entry['id']
       more = entry['FLVFullLength']
       _duration = more['videoDuration']
       if _duration >= 3600 * 1000:
@@ -76,16 +89,16 @@ class Main:
       listitem.setProperty('IsPlayable', 'true')
       listitem.setProperty('mimetype', 'video/mp4')
       listitem.setInfo(type='video',
-                       infoLabels={'title' : name,
-                                   'label' : name,
-                                   'plot' : longdesc,
+                       infoLabels={'title': name,
+                                   'label': name,
+                                   'plot': longdesc,
                                    'plotoutline': shortdesc,
                                    'size': long(size),
                                    'date': date,
-                                   'duration': duration,
-                                   })
+                                   'duration': duration, })
       xbmcplugin.addDirectoryItems(int(sys.argv[1]), [(video, listitem, False)])
     # Content Type
+    # Consider putting musicvideos value to setContent. But no plot support on that view.
     xbmcplugin.setContent(int(sys.argv[1]), 'movies')
     # Sort methods
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_DATE)
@@ -94,12 +107,17 @@ class Main:
     # End of directory...
     xbmcplugin.endOfDirectory(int(sys.argv[1]), True)
 
-  def Arguments(self, arg):
-    Arguments = dict(part.split('=') for part in sys.argv[2][1:].split('&'))
-    return urllib.unquote_plus(Arguments[arg])
+  def arguments(self, arg):
+    try:
+      _arguments = dict(part.split('=') for part in sys.argv[2][1:].split('&'))
+    except KeyError, e:
+      return e
+    else:
+      return urllib.unquote_plus(_arguments[arg])
 
-  def LOG(self, description):
+  def log(self, description):
     xbmc.log("[ADD-ON] '%s v%s': %s" % (__plugin__, __version__, description), xbmc.LOGNOTICE)
+
 
 class DiskCacheFetcher:
   def __init__(self, cache_dir=None):
@@ -120,16 +138,18 @@ class DiskCacheFetcher:
           raise
     self.cache_dir = cache_dir
 
-  def fetch(self, url, max_age=0):
+  def fetch(self, url, max_age=CACHE_TIME):
     # Use MD5 hash of the URL as the filename
     filename = hashlib.md5(url).hexdigest()
     filepath = os.path.join(self.cache_dir, filename)
     if os.path.exists(filepath):
       if int(time.time()) - os.path.getmtime(filepath) < max_age:
-        if Debug: print 'file exists and reading from cache.'
+        if DEBUG:
+          print 'file exists and reading from cache.'
         return open(filepath).read()
     # Retrieve over HTTP and cache, using rename to avoid collisions
-    if Debug: print 'file not yet cached or cache time expired. File reading from URL and try to cache to disk'
+    if DEBUG:
+      print 'file not yet cached or cache time expired. File reading from URL and try to cache to disk'
     data = urllib2.urlopen(url).read()
     fd, temppath = tempfile.mkstemp()
     fp = os.fdopen(fd, 'w')

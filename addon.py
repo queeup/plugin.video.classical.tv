@@ -40,6 +40,10 @@ CACHE_TIME = CACHE_1DAY
 URL = 'http://api.adrise.tv/playlists.php?content-owner=brightcove&_=1327339320673'
 
 
+def log(description):
+  xbmc.log("[ADD-ON] '%s v%s': %s" % (__plugin__, __version__, description), xbmc.LOGNOTICE)
+
+
 class Main:
   def __init__(self):
     if ("action=list" in sys.argv[2]):
@@ -49,7 +53,7 @@ class Main:
 
   def main_menu(self):
     if DEBUG:
-      self.log('main_menu()')
+      log('main_menu()')
     Main = [{'title':__language__(30201), 'number':6},
             {'title':__language__(30202), 'number':5},
             {'title':__language__(30203), 'number':4},
@@ -68,7 +72,7 @@ class Main:
 
   def list_contents(self):
     if DEBUG:
-      self.log('list_contents()')
+      log('list_contents()')
     json = simplejson.loads(fetcher.fetch(URL))
     for entry in json['items'][int(self.arguments('number'))]['videos']:
       thumb = entry['videoStillURL']
@@ -115,9 +119,6 @@ class Main:
     else:
       return urllib.unquote_plus(_arguments[arg])
 
-  def log(self, description):
-    xbmc.log("[ADD-ON] '%s v%s': %s" % (__plugin__, __version__, description), xbmc.LOGNOTICE)
-
 
 class DiskCacheFetcher:
   def __init__(self, cache_dir=None):
@@ -145,11 +146,11 @@ class DiskCacheFetcher:
     if os.path.exists(filepath):
       if int(time.time()) - os.path.getmtime(filepath) < max_age:
         if DEBUG:
-          print 'file exists and reading from cache.'
+          log('file exists and reading from cache.')
         return open(filepath).read()
     # Retrieve over HTTP and cache, using rename to avoid collisions
     if DEBUG:
-      print 'file not yet cached or cache time expired. File reading from URL and try to cache to disk'
+      log('file not yet cached or cache time expired. File reading from URL and try to cache to disk')
     data = urllib2.urlopen(url).read()
     fd, temppath = tempfile.mkstemp()
     fp = os.fdopen(fd, 'w')

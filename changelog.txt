@@ -1,4 +1,11 @@
 plugin.video.classical.tv:
 --------------------------
+version 2.0.0 (30.04.2012)
+-xbmc.python to 2.0 for Eden
+-code cleanup and reorder with pep8 guides
+  #http://www.python.org/dev/peps/pep-0008/
+  #http://www.nikhilgopal.com/2012/04/how-to-improve-coding-style-in-python.html
+the md5 module is deprecated, changed to hashlib. And cosmetic
+
 version 1.0.1 (23.01.2012)
-  -fixed site url.
+-fixed site url.
